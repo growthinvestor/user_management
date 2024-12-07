@@ -15,6 +15,11 @@ from uuid import UUID
 from app.services.email_service import EmailService
 from app.models.user_model import UserRole
 import logging
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
+from sqlalchemy import or_
+
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -168,7 +173,7 @@ class UserService:
         user = await cls.get_by_id(session, user_id)
         if user and user.verification_token == token:
             user.email_verified = True
-            user.verification_token = None  # Clear the token once are yser 
+            user.verification_token = None  # Clear the token once used
             if user.role == UserRole.ANONYMOUS:
                 user.role = UserRole.AUTHENTICATED
             session.add(user)
@@ -199,3 +204,32 @@ class UserService:
             await session.commit()
             return True
         return False
+    
+
+    @staticmethod
+    async def search_users_by_query(
+        db: AsyncSession,
+        query: str
+    ):
+        """
+        Searches for users by username, email, or role based on the provided query.
+        Args:
+            db: The database session.
+            query: The search query.
+        Returns:
+            List of users that match the search query.
+        """
+        # Query for users with a matching username, email, or role
+        stmt = select(User).filter(
+            or_(
+                User.username.ilike(f"%{query}%"),  # Username match
+                User.email.ilike(f"%{query}%"),     # Email match
+                User.role.ilike(f"%{query}%")       # Role match
+            )
+        )
+        
+        # Execute the query
+        result = await db.execute(stmt)
+        users = result.scalars().all()  # Get all users that match the query
+        
+        return users
