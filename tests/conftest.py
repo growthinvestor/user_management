@@ -211,8 +211,10 @@ async def manager_user(db_session: AsyncSession):
     await db_session.commit()
     return user
 
+
+# Configured for the test_search_users_by_email_success pytest 
 @pytest.fixture
-async def preload_user_with_email(db_session: AsyncSession):
+async def preload_user_with_email(db_session: AsyncSession):    
     user_data = {
         "nickname": "john_doe",
         "first_name": "John",
@@ -227,6 +229,30 @@ async def preload_user_with_email(db_session: AsyncSession):
     db_session.add(user)
     await db_session.commit()
     return user
+
+# Configured for the test_search_users_multiple_results pytest 
+
+@pytest.fixture(scope="function")
+async def preload_users_with_same_last_name(db_session: AsyncSession):
+    users = []
+    for i in range(5):  # Creates 5 users with the last name "Doe"
+        user_data = {
+            "nickname": f"user_{i}",
+            "first_name": f"John_{i}",
+            "last_name": "Doe",
+            "email": f"john{i}.doe@example.com",
+            "hashed_password": hash_password("MySecurePassword$1234"),
+            "role": UserRole.AUTHENTICATED,
+            "email_verified": True,
+            "is_locked": False,
+        }
+        user = User(**user_data)
+        db_session.add(user)
+        users.append(user)
+    await db_session.commit()
+    return users
+
+
 
 # Configure a fixture for each type of user role you want to test
 @pytest.fixture(scope="function")

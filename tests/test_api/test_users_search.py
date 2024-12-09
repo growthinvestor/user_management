@@ -105,7 +105,7 @@ async def test_search_users_invalid_value(async_client: AsyncClient, admin_token
     assert response.json()["detail"] == "No users found"
 
 @pytest.mark.asyncio
-async def test_search_users_multiple_results(async_client: AsyncClient, admin_token):
+async def test_search_users_multiple_results(async_client: AsyncClient, admin_token, preload_users_with_same_last_name):
     response = await async_client.get(
         "/users/search",
         params={"column": "last_name", "value": "Doe"},
@@ -115,5 +115,6 @@ async def test_search_users_multiple_results(async_client: AsyncClient, admin_to
     data = response.json()
     assert data["total"] > 1  # Ensure multiple users are returned
     assert all(user["last_name"] == "Doe" for user in data["items"])
+
 
 # Note: Make sure fixtures like admin_token, expired_admin_token, etc., are defined in your conftest.py file.
