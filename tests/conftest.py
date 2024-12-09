@@ -18,6 +18,7 @@ from builtins import Exception, range, str
 from datetime import timedelta
 from unittest.mock import AsyncMock, patch
 from uuid import uuid4
+import os
 
 # Third-party imports
 import pytest
@@ -206,6 +207,23 @@ async def manager_user(db_session: AsyncSession):
         role=UserRole.MANAGER,
         is_locked=False,
     )
+    db_session.add(user)
+    await db_session.commit()
+    return user
+
+@pytest.fixture
+async def preload_user_with_email(db_session: AsyncSession):
+    user_data = {
+        "nickname": "john_doe",
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "hashed_password": hash_password("MySecurePassword$1234"),
+        "role": UserRole.AUTHENTICATED,
+        "email_verified": True,
+        "is_locked": False,
+    }
+    user = User(**user_data)
     db_session.add(user)
     await db_session.commit()
     return user

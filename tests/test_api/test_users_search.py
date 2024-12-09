@@ -8,6 +8,18 @@ from app.utils.nickname_gen import generate_nickname  # If you use generated nic
 
 
 @pytest.mark.asyncio
+async def test_search_users_by_email_success(async_client: AsyncClient, admin_token, preload_user_with_email):
+    response = await async_client.get(
+        "/users/search",
+        params={"column": "email", "value": "john.doe@example.com"},
+        headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total"] == 1
+    assert data["items"][0]["email"] == "john.doe@example.com"
+
+@pytest.mark.asyncio
 async def test_search_users_by_first_name_success(async_client: AsyncClient, admin_token):
     response = await async_client.get(
         "/users/search",
@@ -18,18 +30,6 @@ async def test_search_users_by_first_name_success(async_client: AsyncClient, adm
     data = response.json()
     assert data["total"] > 0  # Ensure some users are returned
     assert any(user["first_name"] == "John" for user in data["items"])
-
-@pytest.mark.asyncio
-async def test_search_users_by_email_success(async_client: AsyncClient, admin_token):
-    response = await async_client.get(
-        "/users/search",
-        params={"column": "email", "value": "john.doe@example.com"},
-        headers={"Authorization": f"Bearer {admin_token}"}
-    )
-    assert response.status_code == 200
-    data = response.json()
-    assert data["total"] == 1
-    assert data["items"][0]["email"] == "john.doe@example.com"
 
 @pytest.mark.asyncio
 async def test_search_users_by_invalid_column(async_client: AsyncClient, admin_token):
