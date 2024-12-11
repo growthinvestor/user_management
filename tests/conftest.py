@@ -230,7 +230,7 @@ async def preload_user_with_email(db_session: AsyncSession):
     await db_session.commit()
     return user
 
-# Configured for the test_search_users_multiple_results pytest 
+# Configured for the test_search_users_multiple_results in the pytest and this will also help with issue with database
 
 @pytest.fixture(scope="function")
 async def preload_users_with_same_last_name(db_session: AsyncSession):
