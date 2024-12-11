@@ -18,6 +18,7 @@ from builtins import Exception, range, str
 from datetime import timedelta
 from unittest.mock import AsyncMock, patch
 from uuid import uuid4
+import os
 
 # Third-party imports
 import pytest
@@ -210,6 +211,49 @@ async def manager_user(db_session: AsyncSession):
     await db_session.commit()
     return user
 
+
+# Configured for the test_search_users_by_email_success pytest 
+@pytest.fixture
+async def preload_user_with_email(db_session: AsyncSession):    
+    user_data = {
+        "nickname": "john_doe",
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "hashed_password": hash_password("MySecurePassword$1234"),
+        "role": UserRole.AUTHENTICATED,
+        "email_verified": True,
+        "is_locked": False,
+    }
+    user = User(**user_data)
+    db_session.add(user)
+    await db_session.commit()
+    return user
+
+# Configured for the test_search_users_multiple_results pytest 
+
+@pytest.fixture(scope="function")
+async def preload_users_with_same_last_name(db_session: AsyncSession):
+    users = []
+    for i in range(5):  # Creates 5 users with the last name "Doe"
+        user_data = {
+            "nickname": f"user_{i}",
+            "first_name": f"John_{i}",
+            "last_name": "Doe",
+            "email": f"john{i}.doe@example.com",
+            "hashed_password": hash_password("MySecurePassword$1234"),
+            "role": UserRole.AUTHENTICATED,
+            "email_verified": True,
+            "is_locked": False,
+        }
+        user = User(**user_data)
+        db_session.add(user)
+        users.append(user)
+    await db_session.commit()
+    return users
+
+
+
 # Configure a fixture for each type of user role you want to test
 @pytest.fixture(scope="function")
 def admin_token(admin_user):
@@ -226,6 +270,12 @@ def manager_token(manager_user):
 def user_token(user):
     token_data = {"sub": str(user.id), "role": user.role.name}
     return create_access_token(data=token_data, expires_delta=timedelta(minutes=30))
+
+@pytest.fixture(scope="function")
+def expired_admin_token(admin_user):
+    # Create a token that has already expired
+    token_data = {"sub": str(admin_user.id), "role": admin_user.role.name}
+    return create_access_token(data=token_data, expires_delta=timedelta(seconds=-1))  # Expired token
 
 @pytest.fixture
 def email_service():
