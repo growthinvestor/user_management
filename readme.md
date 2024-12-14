@@ -86,14 +86,17 @@ DockerHub Repository: https://hub.docker.com/r/amanjaswal/final
 
 ## Links to Artifacts
 
-•	Closed QA Issues:
-o	QA issue 1: [Link](https://github.com/growthinvestor/user_management/tree/1-dockerrunissue)
-o	QA Issue 2: [Link](https://github.com/growthinvestor/user_management/tree/3-secondusercreationissue)
-o	QA Issue 3: [Link](https://github.com/growthinvestor/user_management/tree/5-admin-role-removal-for-token)
-o	QA Issue 4: [Link](https://github.com/growthinvestor/user_management/tree/7-github-actions-workflow-issue)
-o	QA Issue 5: [Link](https://github.com/growthinvestor/user_management/tree/9-fix-database-reset-issue-in-pytest)
-•	Test Cases: [Link](https://github.com/growthinvestor/user_management/blob/main/tests/test_api/test_users_search.py)
-•	Feature Implementation: [Link](https://github.com/growthinvestor/user_management/tree/NewSearchFeature)
+## Closed QA Issues:
+ 
+1. QA issue 1: [Link](https://github.com/growthinvestor/user_management/tree/1-dockerrunissue)
+2. QA Issue 2: [Link](https://github.com/growthinvestor/user_management/tree/3-secondusercreationissue)
+3. QA Issue 3: [Link](https://github.com/growthinvestor/user_management/tree/5-admin-role-removal-for-token)
+4.	QA Issue 4: [Link](https://github.com/growthinvestor/user_management/tree/7-github-actions-workflow-issue)
+5. QA Issue 5: [Link](https://github.com/growthinvestor/user_management/tree/9-fix-database-reset-issue-in-pytest)
+
+1. New Test Cases for Feature: [Link](https://github.com/growthinvestor/user_management/blob/main/tests/test_api/test_users_search.py)
+
+1. Feature Implementation: [Link](https://github.com/growthinvestor/user_management/tree/NewSearchFeature)
 
 ## Final Thoughts
 
